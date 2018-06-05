@@ -52,7 +52,7 @@ class SocialLoginController extends Controller
 
         // If the provider is not an acceptable third party than kick back
         if (! in_array($provider, $this->socialiteHelper->getAcceptedProviders())) {
-            return redirect()->route(home_route())->withFlashDanger(__('auth.socialite.unacceptable', ['provider' => $provider]));
+            return redirect()->route(home_route())->withFlashDanger(__b('auth.socialite.unacceptable', ['provider' => $provider]));
         }
 
         /*
@@ -88,6 +88,9 @@ class SocialLoginController extends Controller
         // User has been successfully created or already exists
         auth()->login($user, true);
 
+        session('tenant_id', config('services.agave.tenant_id'));
+        session('profile', config('services.agave.tenant_id'));
+
         // Set session variable so we know which provider user is logged in as, if ever needed
         session([config('access.socialite_session_name') => $provider]);
 
@@ -102,6 +105,14 @@ class SocialLoginController extends Controller
      */
     protected function getAuthorizationFirst($provider)
     {
+        $clientId = config('services.agave.client_id');
+        $clientSecret = config('services.agave.client_secret');
+        $redirectUrl = config('services.agave.redirect');
+        $additionalProviderConfig = ['instance_uri' => config('services.agave.instance_uri')];
+        $config = new \SocialiteProviders\Manager\Config($clientId, $clientSecret, $redirectUrl, $additionalProviderConfig);
+
+        $socialite = Socialite::with('agave')->setConfig($config);
+
         $socialite = Socialite::driver($provider);
         $scopes = empty(config("services.{$provider}.scopes")) ? false : config("services.{$provider}.scopes");
         $with = empty(config("services.{$provider}.with")) ? false : config("services.{$provider}.with");
@@ -129,6 +140,15 @@ class SocialLoginController extends Controller
      */
     protected function getProviderUser($provider)
     {
-        return Socialite::driver($provider)->user();
+        $clientId = config('services.agave.client_id');
+        $clientSecret = config('services.agave.client_secret');
+        $redirectUrl = config('services.agave.redirect');
+        $additionalProviderConfig = ['instance_uri' => config('services.agave.instance_uri')];
+        $config = new \SocialiteProviders\Manager\Config($clientId, $clientSecret, $redirectUrl, $additionalProviderConfig);
+
+
+        return Socialite::with('agave')->setConfig($config)->user();
+
+//        return Socialite::driver($provider)->user();
     }
 }

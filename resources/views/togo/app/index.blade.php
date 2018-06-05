@@ -1,0 +1,2 @@
+@extends('togo.layout.master')
+

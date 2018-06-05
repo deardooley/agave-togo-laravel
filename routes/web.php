@@ -8,12 +8,23 @@
 // Switch between the included languages
 Route::get('lang/{lang}', 'LanguageController');
 
+// incoming webhook handler
+Route::post('webhooks/{resourceType}/{event}', 'IncomingWebhookController@store')->name('webhook');
+
 /*
  * Frontend Routes
  * Namespaces indicate folder structure
  */
 Route::group(['namespace' => 'Frontend', 'as' => 'frontend.'], function () {
     include_route_files(__DIR__.'/frontend/');
+});
+
+/*
+ * Frontend Routes
+ * Namespaces indicate folder structure
+ */
+Route::group(['namespace' => 'ToGo', 'as' => 'togo.'], function () {
+    include_route_files(__DIR__.'/togo/');
 });
 
 /*

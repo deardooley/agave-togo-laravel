@@ -165,6 +165,8 @@ return [
         Creativeorange\Gravatar\GravatarServiceProvider::class,
         HieuLe\Active\ActiveServiceProvider::class,
 
+        ThinKingMik\ApiProxy\ApiProxyServiceProvider::class,
+
         /*
          * Application Service Providers...
          */
@@ -231,7 +233,7 @@ return [
          */
         'Active' => HieuLe\Active\Facades\Active::class,
         'Gravatar' => Creativeorange\Gravatar\Facades\Gravatar::class,
-//        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
 
     ],
 

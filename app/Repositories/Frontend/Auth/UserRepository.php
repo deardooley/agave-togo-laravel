@@ -299,8 +299,8 @@ class UserRepository extends BaseRepository
             // Update the users information, token and avatar can be updated.
             $user->providers()->update([
                 'token'       => $data->token,
-                'refresh_token' => $data->refresh_token,
-                'expires_at' => Carbon::now()->addSeconds($data->expires_in),
+                'refresh_token' => $data->refreshToken,
+                'expires_at' => Carbon::now()->addSeconds($data->expiresIn),
                 'avatar'      => $data->avatar,
             ]);
 

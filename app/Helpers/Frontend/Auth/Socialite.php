@@ -64,12 +64,12 @@ class Socialite
     public function getAcceptedProviders()
     {
         return [
-            'bitbucket',
-            'facebook',
-            'google',
-            'github',
-            'linkedin',
-            'twitter',
+//            'bitbucket',
+//            'facebook',
+//            'google',
+//            'github',
+//            'linkedin',
+//            'twitter',
             'agave',
         ];
     }

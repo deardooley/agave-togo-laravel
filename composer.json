@@ -8,6 +8,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/agaveplatform/php-sdk"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/deardooley/api-proxy-laravel"
         }
     ],
     "require": {
@@ -27,7 +31,8 @@
         "socialiteproviders/manager": "^3.3",
         "spatie/laravel-html": "^2.4",
         "spatie/laravel-permission": "^2.5",
-        "webpatser/laravel-uuid": "^3.0"
+        "webpatser/laravel-uuid": "^3.0",
+        "deardooley/api-proxy-laravel": "dev-master"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.0",

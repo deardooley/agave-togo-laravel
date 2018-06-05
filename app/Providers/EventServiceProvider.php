@@ -18,6 +18,9 @@ class EventServiceProvider extends ServiceProvider
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
             '\SocialiteProviders\Agave\AgaveExtendSocialite@handle'
         ],
+        'App\Events\Frontend\Webhook\IncomingWebhook' => [
+            'App\Listeners\Frontend\WebhookIncomingWebhookListener@handle'
+        ],
     ];
 
     /**

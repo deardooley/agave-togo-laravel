@@ -1,0 +1,198 @@
+version: '2'
+
+volumes:
+  mariadb:
+    external:
+      name: agave-togo-laravel_mariadb
+
+services:
+
+################################################################
+# ToGo Shared Services
+################################################################
+
+#  changelog:
+#    image: agaveapi/changelog-parser:latest
+#    ports:
+#      - '8021:80'
+#    labels:
+#      - "traefik.backend=changelogparser"
+#      - "traefik.frontend.rule=Host:laravel.togo.agaveplatform.org;PathPrefixStrip:/changelog-parser"
+#      - "traefik.port=80"
+#      - "traefik.protocol=http"
+#      - "traefik.frontend.entryPoints=http,https"
+#    networks:
+#      - togo
+#    # cpus: '0.05'
+#    mem_limit: 256m
+#    restart: on-failure
+        
+  redis:
+    image: "redis:alpine"
+    hostname: cache.togo.agaveplatform.org
+    ports:
+      - "6379:6379"
+    labels:
+      - "traefik.enable=false"
+    networks:
+      - togo
+    # cpus: '0.25'
+    mem_limit: 512M
+    restart: on-failure
+        
+  mariadb:
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - 3306:3306
+    environment:
+      ALLOW_EMPTY_PASSWORD: "no"
+      MARIADB_DATABASE: laravel
+      MARIADB_USER: homestead
+      MARIADB_PASSWORD: homestead
+      MARIADB_ROOT_PASSWORD: changeit
+    labels:
+      - "traefik.enable=false"
+    volumes:
+      - mariadb:/bitnami/mariadb
+    networks:
+      - togo
+    # cpus: '1.0'
+    mem_limit: 2G
+    restart: on-failure
+        
+  maildev:
+    image: djfarrelly/maildev:latest
+    command: bin/maildev --verbose --outgoing-host smtp.sendgrid.net --incoming-user togo_mailer --incoming-pass 'p8xkkhwe8ZRDSnTdCurYyN4j' --outgoing-secure --outgoing-user '$SENDGRID_USERNAME' --outgoing-pass '$SENDGRID_PASSWORD' --auto-relay  --auto-relay-rules /data/rules.json --base-pathname /mail --ip 0.0.0.0
+    ports:
+      - 1025:1025
+      - 1080:1080
+    labels:
+      - "traefik.backend=maildev"
+      - "traefik.frontend.rule=Host:laravel.togo.agaveplatform.org;PathPrefix:/mail"
+      - "traefik.frontend.passHostHeader=true"
+      - "traefik.port=1080"
+      - "traefik.protocol=http"
+      - "traefik.frontend.entryPoints=https,http"
+    volumes:
+      - './docker/maildev:/data'
+    networks:
+      - togo
+    # cpus: '0.10'
+    mem_limit: 512m
+    restart: on-failure
+            
+################################################################
+# Primary Reverse Proxy - Traefik
+################################################################
+
+  traefik:
+    image: traefik:latest
+    command: --configFile=/togo.toml
+    hostname: proxy.togo.agaveplatform.org
+    restart: on-failure
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8443:8443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./docker/traefik/togo.toml:/togo.toml
+      - ./docker/traefik/ssl:/ssl
+    networks:
+      - backend
+      - togo
+    # cpus: '0.5'
+    mem_limit: 512m
+    restart: on-failure
+
+################################################################
+# Laravel Echo Server - Websocket support
+################################################################
+
+  echo:
+    build:
+      context: docker/laravel-echo
+      dockerfile: Dockerfile
+    image: agaveplatform/laravel-echo-server:latest
+    ports:
+      - 3001:3001
+      - 6001:6001
+    labels:
+      - "traefik.backend=echo"
+      - "traefik.frontend.rule=Host:laravel.togo.agaveplatform.org;PathPrefix:/socket.io"
+      - "traefik.frontend.passHostHeader=true"
+      - "traefik.port=6001"
+      - "traefik.protocol=http"
+      - "traefik.frontend.entryPoints=https,http"
+    volumes:
+      - './docker/laravel-echo-server.json:/usr/src/app/laravel-echo-server.json'
+    networks:
+      - togo
+    # cpus: '0.05'
+    mem_limit: 256m
+    restart: on-failure
+  
+  ################################################################
+  # Primary AEMS Business API
+  ################################################################
+
+  nginx:
+    image: bitnami/nginx:1.12.2-r0
+    hostname: laravel.togo.agaveplatform.org
+    depends_on:
+      - laravel
+    ports:
+      - 8080:8080
+    volumes:
+      - ./docker/nginx/togo-vhost.conf:/bitnami/nginx/conf/vhosts/togo-vhost.conf:ro
+      - .:/app:ro
+    labels:
+      - "traefik.backend=nginx"
+      - "traefik.frontend.rule=Host:laravel.togo.agaveplatform.org;PathPrefix:/"
+      - "traefik.port=8080"
+      - "traefik.protocol=http"
+      - "traefik.frontend.entryPoints=http,https"
+    networks:
+      - togo
+    # cpus: '0.10'
+    mem_limit: 1024m
+    restart: on-failure
+
+  laravel:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    command: 'php-fpm -R --force-stderr -F --pid /opt/bitnami/php/tmp/php-fpm.pid -y /opt/bitnami/php/etc/php-fpm.conf'
+    image: deardooley/php-fpm:7.1.9-r0
+    depends_on:
+      - mariadb
+    working_dir: /app/public
+    volumes:
+      - .:/app
+      - ./docker/php-fpm:/bitnami
+#      - ./docker/php-fpm/app-entrypoint.sh:/app-entrypoint.sh
+#      - ./docker/php-fpm:/bitnami/php/conf/php.ini
+    restart: on-failure
+    ports:
+      - 9000:9000
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      DB_HOST: mariadb
+      DB_USERNAME: homestead
+      DB_DATABASE: laravel
+      DB_PASSWORD: homestead
+      DISABLE_LAUNCH_TRACKING: doitnow
+    labels:
+      - "traefik.enable=false"
+    networks:
+      - togo
+    # cpus: '2.0'
+    mem_limit: 1G
+    restart: on-failure
+
+networks:
+  togo:
+    driver: bridge
+  backend:
+    driver: bridge
