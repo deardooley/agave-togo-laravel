@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use Agave\Client\Exceptions\CredentialsException;
+use Agave\Client\Exceptions\OAuthException;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Spatie\Permission\Exceptions\UnauthorizedException;
@@ -57,6 +59,17 @@ class Handler extends ExceptionHandler
                 ->route(home_route())
                 ->withFlashDanger(__('auth.general_error'));
         }
+        else if ($exception instanceof CredentialsException) {
+            return redirect()
+                ->route("auth.login")
+                ->withFlashDanger(__('auth.general_error'));
+        }
+        else if ($exception instanceof OAuthException) {
+            return redirect()
+                ->route("auth.login")
+                ->withFlashDanger(__('auth.general_error'));
+        }
+
 
         return parent::render($request, $exception);
     }

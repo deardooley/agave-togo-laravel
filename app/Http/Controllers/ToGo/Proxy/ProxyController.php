@@ -22,8 +22,9 @@ use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use ThinKingMik\ApiProxy\Exceptions\CookieExpiredException;
+use ThinKingMik\ApiProxy\Exceptions\ProxyException;
 use ThinKingMik\ApiProxy\Exceptions\ProxyMissingParamException;
-use ThinKingMik\ApiProxy\Proxy;
+use ThinKingMik\ApiProxy\Facades\ApiProxyFacade as Proxy;
 
 /**
  * Class DashboardController.
@@ -32,93 +33,115 @@ class ProxyController extends Controller
 {
     /**
      * Attempty proxy using Larave API Proxy module
+     * @param Request $request
+     * @param string $apiPath actual api path relative to the route mapped to this controller
      * @return Response
      * @throws AuthorizationException
-     * @throws AuthenticationException
+     * @throws CookieExpiredException
+     * @throws ProxyMissingParamException
+     * @throws \Agave\Client\ApiException
+     * @throws \Exception
      */
-    public function proxy(Request $request)
+    public function proxy(Request $request, $apiPath)
     {
         $user = Auth::getUser();
+        $provider = session()->get('socialite_provider') ;
+        $provider = $provider ?: 'agave';
 
-        if ($user == null && session()->get('provider')) {
-            $provider = session()->get('provider');
+        /** @var SocialAccount $socialAccount */
+        $socialAccount = SocialAccount::byUserProvider($user->id, $provider)->first();
+//
 
-            /** @var SocialAccount $socialAccount */
-            $socialAccount = SocialAccount::byUserProvider($user->id, $provider)->first();
+//        if ($user !== null && $provider !== null) {
+//
+//            /** @var SocialAccount $socialAccount */
+//            $socialAccount = SocialAccount::byUserProvider($user->id, $provider)->first();
+//
+//            Log::debug($socialAccount->toArray());
+//            // if they have not linked accounts, throw exception
+//            if ($socialAccount == null) {
+//                throw new AuthorizationException("User has not linked their agave account.");
+////                view('json.index', ['status' => 'error', 'message' => "User has not linked their agave account.",'result' => []]);
+//            }
+//            // if their linked account does not have an access token, throw exception
+//            else if (empty($socialAccount->token)) {
+////                return view('json.index', ['status' => 'error', 'message' => "User has not logged in with their agave account.",'result' => []]);
+//                throw new AuthorizationException("User has not logged in with their agave account.");
+//            }
+//            // if they have an access token, but the expiration timestamp is in the past,
+//            // check the refresh token and attempt to refresh before makign the call.
+//            else if (empty($socialAccount->expires_at) || $socialAccount->expires_at->isPast()) {
+//                Log::debug("Token is expired");
+//
+//                // if the refresh token is missing, throw exception because we cannot refresh to get a valid token
+//                if (empty($socialAccount->refresh_token)) {
+////                    view('json.index', ['status' => 'error', 'message' => "No refresh token found. Please reauthenticate and try again.",'result' => []]);
+//                    throw new AuthorizationException("No refresh token found. Please reauthenticate and try again.");
+//                }
+//                // we have a linked account, access token that we think is expired, and refresh token
+//                // let's try to refresh
+//                else {
+//                    Log::debug("User {$user->id}|{$socialAccount->provider_id}@{$provider}token is expired. Attempting refresh.");
+//
+//                    // recycle the config from socialite as we can use the same api client to auth users
+//                    $agaveConfig = new Configuration([
+//                        'baseUrl' => rtrim(config('services.agave.instance_uri'), '/\s'),
+//                    ]);
+//
+//                    $tokenApi = new TokensApi($agaveConfig);
+//
+//                    /** @var RefreshToken $refreshToken */
+//                    $refreshToken = $tokenApi->refresh($socialAccount->refresh_token,
+//                        config('services.agave.client_id'),
+//                        config('services.agave.client_secret'));
+//
+//                    // if the refresh worked, update the tokens and expiration dates in their linked account and
+//                    // save for future use.
+//                    if ($refreshToken) {
+//
+//                        Log::debug("Successfully generated a refresh token for {$user->id}|{$socialAccount->provider_id}@{$provider}.");
+//
+//                        $socialAccount->update([
+//                            'token' => $refreshToken->getAccessToken(),
+//                            'refresh_token' => $refreshToken->getRefreshToken(),
+//                            'expires_at' => Carbon::now()->addSeconds($refreshToken->getExpiresIn())
+//                        ]);
+//                    }
+//                    else {
+////                        view('json.index', ['status' => 'error', 'message' => "Failed to refresh the user token. Please reauthenticate and try again.",'result' => []]);
+//                        throw new AuthorizationException("Failed to refresh the user token. Please reauthenticate and try again.");
+//                    }
+//                }
+//            }
 
-            // if they have not linked accounts, throw exception
-            if ($socialAccount == null) {
-                throw new AuthorizationException("User has not logged in with their agave account.");
-            }
-            // if their linked account does not have an access token, throw exception
-            else if (empty($socialAccount->access_token)) {
-                throw new AuthorizationException("User has not logged in with their agave account.");
-            }
-            // if they have an access token, but the expiration timestamp is in the past,
-            // check the refresh token and attempt to refresh before makign the call.
-            else if (empty($socialAccount->expiresAt) || $socialAccount->expiresAt->before(Carbon::now())) {
-
-                // if the refresh token is missing, throw exception because we cannot refresh to get a valid token
-                if (empty($socialAccount->refresh_token)) {
-                    throw new AuthorizationException("No refresh token found. Please reauthenticate and try again.");
-                }
-                // we have a linked account, access token that we think is expired, and refresh token
-                // let's try to refresh
-                else {
-
-                    Log::debug("User {$user->username}|{$socialAccount->provider_id}@{$provider}token is expired. Attempting refresh.");
-
-                    // recycle the config from socialite as we can use the same api client to auth users
-                    $agaveConfig = new Configuration([
-                        'baseUrl' => config('services.agave.instance_uri'),
-                    ]);
-
-                    $tokenApi = new TokensApi($agaveConfig);
-
-                    /** @var RefreshToken $refreshToken */
-                    $refreshToken = $tokenApi->refresh($socialAccount->refresh_token,
-                        config('services.agave.client_id'),
-                        config('services.agave.client_secret'));
-
-                    // if the refresh worked, update the tokens and expiration dates in their linked account and
-                    // save for future use.
-                    if ($refreshToken) {
-                        Log::debug("Successfully generated a refresh token for {$user->username}|{$socialAccount->provider_id}@{$provider}.");
-
-                        $socialAccount->update([
-                            'access_token' => $refreshToken->getAccessToken(),
-                            'refresh_token' => $refreshToken->getRefreshToken(),
-                            'expires_at' => Carbon::now()->addSeconds($refreshToken->getExpiresIn())
-                        ]);
-                    }
-                    else {
-                        throw new AuthorizationException("Failed to refresh the user token. Please reauthenticate and try again.");
-                    }
-                }
-                // refresh the token
-            }
-
-
-//        try {
-
+        try {
             // We believe we have a valid user with what looks like a valid set of keys. Let's try to make the call.
 
-            $agavePath = str_replace("/togo/proxy", "", $request->path());
             $inputs = $request->all();
             // insert the target url so the proxy knows where to send the request
-            $inputs['uri'] = config('services.agave.instance_uri') . '/' . $agavePath;
+            $inputs['uri'] = config('services.agave.instance_uri') . '/' . $apiPath;
             // insert the auth token to the inputs. This will get translated into the oauth header before the call is made.
-            $inputs['access_token'] = $socialAccount->access_token;
+            $inputs['access_token'] = $socialAccount->token;
 
-            return Proxy::makeRequest(Request::method(), $inputs);
-//        } catch (CookieExpiredException $e) {
-//        } catch (ProxyMissingParamException $e) {
-//        } catch (\Exception $e) {
+            if ($request->acceptsHtml()) {
+                /** @var Response $response */
+                $response = Proxy::makeRequest($request->method(), $inputs);
+                $response->headers->set('Content-Type', 'text/html');
+
+                return $response;
+            }
+            else {
+                return Proxy::makeRequest($request->method(), $inputs);
+            }
+        } catch (\Exception | \Throwable $e) {
+            throw new ProxyException("An error occurred while proxying a request to {$apiPath}");
+            //)return view('json.index', ['status' => 'error', 'message' => $e->getMessage(), 'result' => $e->getTrace()]);
+        }
 //        }
-        }
-        else {
-            throw new AuthenticationException("User login required.");
-        }
+//        else {
+//            return view('json.index', ['status' => 'error', 'message' => "User login required.", 'result' => ['user' => $user->toArray(), 'provider' => $provider, 'session' => session()]]);
+////            throw new AuthenticationException("User login required.");
+//        }
     }
 
     /**

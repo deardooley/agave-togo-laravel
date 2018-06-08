@@ -26,7 +26,7 @@ class LoginController extends Controller
      */
     public function redirectPath()
     {
-        return route(home_route());
+        return route(' togo.app.index');
     }
 
     /**
@@ -120,7 +120,7 @@ class LoginController extends Controller
         $this->guard()->logout();
         $request->session()->invalidate();
 
-        return redirect()->route('frontend.index');
+        return redirect()->route('frontend.auth.login');
     }
 
     /**

@@ -11,13 +11,14 @@
  * All route names are prefixed with 'togo.'
  * These routes can not be hit if the password is expired
  */
-Route::group(['middleware' => ['auth', 'password_expires']], function () {
+Route::group(['middleware' => ['auth', 'password_expires', 'refresh.token', 'activity', 'throttle:1000,1']], function () {
     Route::group(['namespace' => 'Proxy', 'as' => 'proxy.'], function () {
         /*
          * Agave AngularJS specific routes
          */
-        Route::match(array('GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTION'), "/api",
-            'ProxyController@proxy')->name('index');
+        Route::any("proxy/{apiPath}",'ProxyController@proxy')
+            ->where("apiPath", ".*")
+            ->name('index');
 
     });
 });

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -47,8 +48,8 @@ class AppServiceProvider extends ServiceProvider
         }
 
         // Force SSL in production
-        if ($this->app->environment() == 'production') {
-            //URL::forceScheme('https');
+        if ($this->app->environment() == 'production' || starts_with(config('app.url'), 'https')) {
+            URL::forceScheme('https');
         }
 
         // Set the default string length for Laravel5.4

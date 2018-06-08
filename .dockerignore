@@ -7,3 +7,14 @@ Homestead.yaml
 .git
 .gitignore
 .gitattributes
+.github
+.phpstorm*
+.styleci.yml
+.circleci
+.editorconfig
+storage/logs/*.log
+storage/debugbar
+storage/framework/sessions/*
+storage/framework/cache/*
+storage/framework/testing/*
+storage/framework/views/*.php

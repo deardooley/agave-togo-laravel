@@ -1,0 +1,226 @@
+@verbatim
+<div class="page-quick-sidebar">
+    <div class="nav-justified">
+        <ul class="nav nav-tabs nav-justified">
+            <li class="active">
+                <a href="#" data-target="#quick_sidebar_tab_2" data-toggle="tab" dropdown-menu-hover data-close-others="true"> Team
+                    <!--<span class="badge badge-success"></span>-->
+                </a>
+            </li>
+            <li>
+                <a href="#" data-target="#quick_sidebar_tab_4" data-toggle="tab" dropdown-menu-hover data-close-others="true"> Changelog
+                    <!--<span class="badge badge-success"></span>-->
+                </a>
+            </li>
+            <li>
+                <a href="#" data-target="#quick_sidebar_tab_3" data-toggle="tab" dropdown-menu-hover data-close-others="true"> Settings
+                    <!--<span class="badge badge-success"></span>-->
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane page-quick-sidebar-alerts" id="quick_sidebar_tab_1">
+                <div class="page-quick-sidebar-alerts-list" data-rail-color="#ddd" data-wrapper-class="page-quick-sidebar-list">
+                    <h3 class="list-heading">General</h3>
+                    <ul class="feeds list-items">
+                        <li ng-repeat="alert in alerts">
+                            <div class="col1">
+                                <div class="cont">
+                                    <div class="cont-col1">
+                                        <div class="label label-sm {{ alert.status | notificationStatusColor }}">
+                                            <i class="fa {{ alert.status | notificationStatusIcon }}"></i>
+                                        </div>
+                                    </div>
+                                    <div class="cont-col2">
+                                        <div class="desc"> {{ alert.description }}.
+                                            <span class="label label-sm label-warning "> Take action
+                                                <i class="fa fa-share"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col2">
+                                <div class="date" am-time-ago="alert.created"></div>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-pane page-quick-sidebar-chat active" id="quick_sidebar_tab_2">
+                <div class="page-quick-sidebar-chat-users">
+                    <h3 class="list-heading">Team</h3>
+                    <ul class="media-list list-items">
+                        <li class="media" ng-repeat="tenantContact in tenant.contact">
+                            <img class="media-object" ng-src="https://www.gravatar.com/avatar/{{ tenantContact.email | gravatar }}?d=mm" alt="{{ tenantContact.name }}">
+                            <div class="media-body">
+                                <h4 class="media-heading">{{ tenantContact.name }}</h4>
+                                <div class="media-heading-sub"> Tenant {{ tenantContact.type | capitalize }} </div>
+                                <div ng-if="tenantContact.primary" class="media-heading-sub"> Primary Contact </div>
+                            </div>
+                        </li>
+                        <li class="media">
+                            <img class="media-object" src="https://www.gravatar.com/avatar/a829bf744d5e7175dbff034b0db95fd9?d=mm" alt="Rion Dooley">
+                            <div class="media-body">
+                                <h4 class="media-heading">Rion Dooley</h4>
+                                <div class="media-heading-sub"> Agave Platform </div>
+                                <div class="media-heading-small"> Project Lead </div>
+                            </div>
+                        </li>
+                        <li class="media">
+                            <img class="media-object" src="https://www.gravatar.com/avatar/d254dbddc4b61e462df5a4adb3d2640f?d=mm" alt="...">
+                            <div class="media-body">
+                                <h4 class="media-heading"> Manuel Rojas </h4>
+                                <div class="media-heading-sub"> Agave ToGo  </div>
+                                <div class="media-heading-small"> Contributing Developer </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-pane page-quick-sidebar-settings" id="quick_sidebar_tab_3">
+                <div class="page-quick-sidebar-settings-list">
+                    <h3 class="list-heading">Notification Settings</h3>
+                    <ul class="list-items borderless">
+                        <li> Default Target
+                            <select ng-model="settings.notif.target.type" class="form-control input-inline input-sm input-small">
+                                <option value="">App</option>
+                                <option value="email">Email</option>
+                                <option value="requestbin" selected>RequestBin</option>
+                                <option value="slack">Slack</option>
+                                <option value="webhook">Webhook</option>
+                            </select> </li>
+                        <li ng-if="settings.notif.target.type"> {{ settings.notif.target.type | capitalize }} URL
+                            <input type="text" ng-model="settings.notif.target.url" value=""> </li>
+
+                        <li> Verbosity Level
+                            <select class="form-control input-inline input-sm input-small">
+                                <option value="completion" selected>Completion</option>
+                                <option value="progress">Updates</option>
+                                <option value="*">Firehose</option>
+                            </select>
+                        </li>
+
+                        <li> Retry Failed Attempts
+                            <input ng-model="settings.notif.policy.enabled" type="checkbox" class="make-switch" checked data-size="small" data-on-color="success" data-on-text="YES" data-off-color="default" data-off-text="NO"> </li>
+
+                        <li ng-if="settings.notif.policy.enabled"> Retry Strategy
+                            <select ng-model="settings.notif.policy.retryStrategy" class="form-control input-inline input-sm input-small">
+                                <option value="NONE" selected>None</option>
+                                <option value="IMMEDIATE" >Immediate</option>
+                                <option value="DELAYED">Delayed</option>
+                                <option value="EXPONENTIAL">Exponential Backoff</option>
+                            </select> </li>
+                        <li> Failed Delivery Attempts
+                            <input type="number" minlength="0" maxlength="25" ng-model="settings.notif.policy.retryLimit" class="form-control input-inline input-sm input-small" value="5" /> </li>
+                        <li> Save on Failure
+                            <input type="checkbox" ng-model="settings.notif.policy.saveOnFailure" class="make-switch" checked data-size="small" data-on-color="success" data-on-text="ON" data-off-color="default" data-off-text="OFF"> </li>
+                    </ul>
+                    <h3 class="list-heading">Notification Defaults</h3>
+                    <ul class="list-items borderless">
+                        <li> Jobs Alerts
+                            <input type="checkbox" class="make-switch" checked data-size="small" data-on-color="success" data-on-text="ON" data-off-color="default" data-off-text="OFF"> </li>
+                        <li> Data Alerts
+                            <input type="checkbox" class="make-switch" checked data-size="small" data-on-color="success" data-on-text="ON" data-off-color="default" data-off-text="OFF"> </li>
+                        <li> Apps Alerts
+                            <input type="checkbox" class="make-switch" checked data-size="small" data-on-color="success" data-on-text="ON" data-off-color="default" data-off-text="OFF"> </li>
+                        <li> Systems Alerts
+                            <input type="checkbox" class="make-switch" checked data-size="small" data-on-color="success" data-on-text="ON" data-off-color="default" data-off-text="OFF"> </li>
+                    </ul>
+                    <h3 class="list-heading">General Settings</h3>
+                    <ul class="list-items borderless">
+                        <li> Offline
+                            <input type="checkbox" ng-model="offline" class="make-switch" data-size="small" data-on-color="info" data-on-text="ON" data-off-color="default" data-off-text="OFF"> </li>
+                        <li> Allow Tracking
+                            <input type="checkbox" class="make-switch" data-size="small" data-on-color="info" data-on-text="ON" data-off-color="default" data-off-text="OFF"> </li>
+                        <li> Log Errors
+                            <input type="checkbox" class="make-switch" checked data-size="small" data-on-color="danger" data-on-text="ON" data-off-color="default" data-off-text="OFF"> </li>
+                        <li> Auto Submit Issues
+                            <input type="checkbox" class="make-switch" data-size="small" data-on-color="warning" data-on-text="ON" data-off-color="default" data-off-text="OFF"> </li>
+                        <li> Allow Offline Storage
+                            <input type="checkbox" class="make-switch" checked data-size="small" data-on-color="success" data-on-text="ON" data-off-color="default" data-off-text="OFF"> </li>
+                        <li> Publish Anonymous Activity
+                            <input type="checkbox" class="make-switch" checked data-size="small" data-on-color="success" data-on-text="ON" data-off-color="default" data-off-text="OFF"> </li>
+                    </ul>
+                    <div class="inner-content">
+                        <button class="btn btn-success">
+                            <i class="icon-settings"></i> Save Changes</button>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane page-quick-sidebar-alerts" id="quick_sidebar_tab_4">
+                <div class="page-quick-sidebar-alerts-list">
+                    <h3 class="list-heading"> Added
+                        <span class="label label-lg label-default ng-binding pull-right mrm">{{ changelog.version }}</span>
+                    </h3>
+                    <ul class="feeds list-items">
+                        <li ng-repeat="entry in changelog.items.added track by $index">
+                            <div class="col1">
+                                <div class="cont">
+                                    <div class="cont-col1">
+                                        <div class="label label-sm label-success">
+                                            <i class="fa fa-plus"></i>
+                                        </div>
+                                    </div>
+                                    <div class="cont-col2">
+                                        <div class="desc"> {{ entry}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col2">
+                                <div class="date"> {{ changelog.date | amDateFormat:'MMM Do' }} </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <h3 class="list-heading"> Changed
+                        <span class="label label-lg label-default ng-binding pull-right mrm">{{ changelog.version }}</span>
+                    </h3>
+                    <ul class="feeds list-items">
+                        <li ng-repeat="entry in changelog.items.changed track by $index">
+                            <div class="col1">
+                                <div class="cont">
+                                    <div class="cont-col1">
+                                        <div class="label label-sm label-info">
+                                            <i class="fa fa-refresh"></i>
+                                        </div>
+                                    </div>
+                                    <div class="cont-col2">
+                                        <div class="desc"> {{ entry }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col2">
+                                <div class="date"> {{ changelog.date | amDateFormat:'MMM Do' }} </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h3 class="list-heading"> Removed
+                        <span class="label label-lg label-default ng-binding pull-right mrm">{{ changelog.version }}</span>
+                    </h3>
+                    <ul class="feeds list-items">
+                        <li ng-repeat="entry in changelog.items.changed track by $index">
+                            <div class="col1">
+                                <div class="cont">
+                                    <div class="cont-col1">
+                                        <div class="label label-sm label-danger">
+                                            <i class="fa fa-times"></i>
+                                        </div>
+                                    </div>
+                                    <div class="cont-col2">
+                                        <div class="desc"> {{ entry }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col2">
+                                <div class="date"> {{ changelog.date | amDateFormat:'MMM Do' }} </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endverbatim

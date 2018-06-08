@@ -95,7 +95,7 @@ class SocialLoginController extends Controller
         session([config('access.socialite_session_name') => $provider]);
 
         // Return to the intended url or default to the class property
-        return redirect()->intended(route(home_route()));
+        return redirect()->intended(route('togo.app.index'));
     }
 
     /**
@@ -113,7 +113,7 @@ class SocialLoginController extends Controller
 
         $socialite = Socialite::with('agave')->setConfig($config);
 
-        $socialite = Socialite::driver($provider);
+//        $socialite = Socialite::driver($provider);
         $scopes = empty(config("services.{$provider}.scopes")) ? false : config("services.{$provider}.scopes");
         $with = empty(config("services.{$provider}.with")) ? false : config("services.{$provider}.with");
         $fields = empty(config("services.{$provider}.fields")) ? false : config("services.{$provider}.fields");

@@ -15,8 +15,8 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        \SocialiteProviders\Manager\SocialiteWasCalled::class => [
-            '\SocialiteProviders\Agave\AgaveExtendSocialite@handle'
+        'SocialiteProviders\Manager\SocialiteWasCalled' => [
+            'SocialiteProviders\Agave\AgaveExtendSocialite@handle'
         ],
         'App\Events\Frontend\Webhook\IncomingWebhook' => [
             'App\Listeners\Frontend\WebhookIncomingWebhookListener@handle'

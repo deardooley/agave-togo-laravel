@@ -1,6 +1,10 @@
-<div class="page-footer-inner"> 2016 &copy; Metronic Theme By
-    <a target="_blank" href="http://keenthemes.com">Keenthemes</a> &nbsp;|&nbsp;
-    <a href="http://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469?ref=keenthemes" title="Purchase Metronic just for 27$ and get lifetime updates for free" target="_blank">Purchase Metronic!</a>
+<div class="page-footer-inner">
+    <a href="https://agaveapi.co/" >2018 &copy; <span class="icon-agave"></span></a>
+    <a href="https://nsf.org/" ><img class="funding" src="{{ URL::asset('assets/pages/img/logos/nsf-white.png') }}"/></a>
+    <a href="https://vdjserver.org/" ><img class="funding" src="{{ URL::asset('assets/pages/img/logos/vdjserver-white.png') }}"/></a>
+    <a href="https://cyverse.org/" ><img class="funding" src="{{ URL::asset('assets/pages/img/logos/iplant-white.png') }}"/></a>
+    <a href="https://araport.org/" ><img class="funding" src="{{ URL::asset('assets/pages/img/logos/araport-white.png') }}"/></a>
+    <a href="https://tacc.utexas.edu/" ><img class="funding" src="{{ URL::asset('assets/pages/img/logos/tacc-white.png') }}"/></a>
 </div>
 <div class="scroll-to-top">
     <i class="icon-arrow-up"></i>

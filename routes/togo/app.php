@@ -15,8 +15,8 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
         /*
          * Agave AngularJS specific routes
          */
-//        Route::any('/app', 'AppController@index')->name('index');
-        Route::get('togo', 'AppController@index')->name('index');
+//        Route::redirect('/togo', '/togo/');
+        Route::get('/togo', 'AppController@index')->name('index');
 
     });
 });

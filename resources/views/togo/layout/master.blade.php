@@ -17,19 +17,20 @@
     <link rel="shortcut icon" href="/favicon.ico') }}">
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <!--<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />-->
-    <!-- <link href="{{ asset('bower_components/googlefonts/css/style.css" rel="stylesheet" type="text/css') }}" /> -->
+    <!-- <link href="{{ asset('bower_components/googlefonts/css/style.css') }}" rel="stylesheet" type="text/css" /> -->
     <link href="{{ asset('app/css/global.css') }}" id="style_components" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css') }}" />
-    <link href="{{ asset('bower_components/agave-fonticons/style.css" rel="stylesheet" type="text/css') }}" />
-    <link href="{{ asset('assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css') }}" />
-    <link href="{{ asset('assets/global/plugins/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css') }}" />
-    <link href="{{ asset('assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css') }}" />
-    <link href="{{ asset('assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css') }}" />
-    <link href="{{ asset('bower_components/angular-ui-select/dist/select.min.css" rel="stylesheet" type="text/css') }}" />
-    <link href="{{ asset('bower_components/angular-toastr/dist/angular-toastr.css" rel="stylesheet" type="text/css') }}"/>
-    <link href="{{ asset('bower_components/json-formatter/dist/json-formatter.css" rel="stylesheet" type="text/css') }}"/>
-    <link href="{{ asset('bower_components/jsoneditor/dist/jsoneditor.min.css" rel="stylesheet" type="text/css') }}"/>
-    <link href="{{ asset('bower_components/angular-object-diff/dist/angular-object-diff.css" rel="stylesheet" type="text/css') }}">
+
+    <link href="{{ asset('assets/global/plugins/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('bower_components/agave-fonticons/style.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/simple-line-icons/simple-line-icons.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/bootstrap/css/bootstrap.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/uniform/css/uniform.default.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('bower_components/angular-ui-select/dist/select.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('bower_components/angular-toastr/dist/angular-toastr.css') }}" rel="stylesheet" type="text/css') }}"/>
+    <link href="{{ asset('bower_components/json-formatter/dist/json-formatter.css') }}" rel="stylesheet" type="text/css') }}"/>
+    <link href="{{ asset('bower_components/jsoneditor/dist/jsoneditor.min.css') }}" rel="stylesheet" type="text/css') }}"/>
+    <link href="{{ asset('bower_components/angular-object-diff/dist/angular-object-diff.css') }}" rel="stylesheet" type="text/css') }}">
 
 
     <!-- END GLOBAL MANDATORY STYLES -->
@@ -38,11 +39,11 @@
     <!-- END DYMANICLY LOADED CSS FILES -->
     <!-- BEGIN THEME STYLES -->
     <!-- DOC: To use 'rounded corners' style just load 'components-rounded.css' stylesheet instead of 'components.css' in the below style tag -->
-    <link href="{{ asset('assets/global/css/components.css" id="style_components" rel="stylesheet" type="text/css') }}" />
-    <link href="{{ asset('assets/global/css/plugins.css" rel="stylesheet" type="text/css') }}" />
-    <link href="{{ asset('assets/layouts/layout/css/layout.css" rel="stylesheet" type="text/css') }}" />
-    <link href="{{ asset('assets/layouts/layout/css/themes/darkblue.css" rel="stylesheet" type="text/css') }}" id="style_color" />
-    <link href="{{ asset('assets/layouts/layout/css/custom.css" rel="stylesheet" type="text/css') }}" />
+    <link href="{{ asset('assets/global/css/components.css') }}" id="style_components" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/global/css/plugins.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/layouts/layout/css/layout.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/layouts/layout/css/themes/darkblue.css') }}" rel="stylesheet" type="text/css" id="style_color" />
+    <link href="{{ asset('assets/layouts/layout/css/custom.css') }}" rel="stylesheet" type="text/css" />
     <!-- END THEME STYLES -->
 </head>
 <!-- END HEAD -->
@@ -55,19 +56,25 @@
     </div>
     <!-- END PAGE SPINNER -->
     <!-- BEGIN HEADER -->
-    <div data-ng-include="'tpl/header.html'" data-ng-controller="HeaderController" class="page-header navbar navbar-fixed-top"> </div>
+    <div data-ng-controller="HeaderController" class="page-header navbar navbar-fixed-top">
+        @include('togo.include.header')
+    </div>
     <!-- END HEADER -->
     <div class="clearfix"> </div>
     <!-- BEGIN CONTAINER -->
     <div class="page-container">
         <!-- BEGIN SIDEBAR -->
-        <div data-ng-include="'tpl/sidebar.html'" data-ng-controller="SidebarController" class="page-sidebar-wrapper"> </div>
+        <div data-ng-controller="SidebarController" class="page-sidebar-wrapper">
+            @include('togo.include.sidebar')
+        </div>
         <!-- END SIDEBAR -->
         <!-- BEGIN CONTENT -->
         <div class="page-content-wrapper">
             <div class="page-content">
                 <!-- BEGIN STYLE CUSTOMIZER(optional) -->
-                <div data-ng-include="'tpl/theme-panel.html'" data-ng-controller="ThemePanelController" class="theme-panel hidden-xs hidden-sm"> </div>
+                <div data-ng-controller="ThemePanelController" class="theme-panel hidden-xs hidden-sm">
+                    @include('togo.include.theme-panel')
+                </div>
                 <!-- END STYLE CUSTOMIZER -->
                 <!-- BEGIN ACTUAL CONTENT -->
                 <div ui-view class="fade-in-up"> </div>
@@ -79,12 +86,16 @@
         <a href="javascript:;" class="page-quick-sidebar-toggler">
             <i class="icon-login"></i>
         </a>
-        <div data-ng-include="'tpl/quick-sidebar.html'" data-ng-controller="QuickSidebarController" class="page-quick-sidebar-wrapper"></div>
+        <div data-ng-controller="QuickSidebarController" class="page-quick-sidebar-wrapper">
+            @include('togo.include.quick-sidebar')
+        </div>
         <!-- END QUICK SIDEBAR -->
     </div>
     <!-- END CONTAINER -->
     <!-- BEGIN FOOTER -->
-    <div data-ng-include="'tpl/footer.html'" data-ng-controller="FooterController" class="page-footer"> </div>
+    <div data-ng-controller="FooterController" class="page-footer">
+        @include('togo.include.footer')
+    </div>
     <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
     <!-- END FOOTER -->
 

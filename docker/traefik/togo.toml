@@ -1,0 +1,33 @@
+logLevel = "DEBUG"
+defaultEntryPoints = ["http","https"]
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+#    [entryPoints.http.redirect]
+#      entryPoint = "https"`
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+      [[entryPoints.https.tls.certificates]]
+      CertFile = "/ssl/laravel.togo.agaveplatform.org.crt"
+      KeyFile = "/ssl/laravel.togo.agaveplatform.org.key"
+
+[web]
+address = ":8443"
+CertFile = "/ssl/proxy.togo.agaveplatform.org.crt"
+KeyFile = "/ssl/proxy.togo.agaveplatform.org.key"
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "docker.localhost"
+watch = true
+
+#[acme]
+#email = "ssl@foreigncredentials.org"
+#storageFile = "/ssl/fcsa_ssl.json"
+#onDemand = false
+#entryPoint = "https"
+#
+#[[acme.domains]]
+#   main = "laravel.togo.agaveplatform.org"
+#  sans = ["api.fcsa.biz", "aems.fcsa.biz", "admin.fcsa.biz", "mailhog.fcsa.biz", "proxy.fcsa.biz"]

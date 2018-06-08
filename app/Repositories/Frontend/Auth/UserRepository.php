@@ -241,6 +241,8 @@ class UserRepository extends BaseRepository
         throw new GeneralException(__('exceptions.frontend.auth.confirmation.mismatch'));
     }
 
+
+
     /**
      * @param $data
      * @param $provider

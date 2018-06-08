@@ -14,6 +14,11 @@ return [
 
     'enabled' => env('DEBUGBAR_ENABLED', env('APP_DEBUG', false)),
 
+    'except' => [
+        'api/*',
+        'togo/*',
+    ],
+
     /*
      |--------------------------------------------------------------------------
      | Storage settings

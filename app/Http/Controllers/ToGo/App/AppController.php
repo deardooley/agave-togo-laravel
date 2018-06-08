@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ToGo\App;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class DashboardController.
@@ -14,6 +15,7 @@ class AppController extends Controller
      */
     public function index()
     {
-        return view('togo.app.index');
+        app('debugbar')->disable();
+        return view('togo.app.index')->withUser(Auth::getUser());
     }
 }

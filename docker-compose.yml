@@ -136,60 +136,32 @@ services:
   # Primary AEMS Business API
   ################################################################
 
-  nginx:
-    image: bitnami/nginx:1.12.2-r0
-    hostname: laravel.togo.agaveplatform.org
-    depends_on:
-      - laravel
-    ports:
-      - 8080:8080
-    volumes:
-      - ./docker/nginx/togo-vhost.conf:/bitnami/nginx/conf/vhosts/togo-vhost.conf:ro
-      - .:/app:ro
-    labels:
-      - "traefik.backend=nginx"
-      - "traefik.frontend.rule=Host:laravel.togo.agaveplatform.org;PathPrefix:/"
-      - "traefik.port=8080"
-      - "traefik.protocol=http"
-      - "traefik.frontend.entryPoints=http,https"
-    networks:
-      - togo
-    # cpus: '0.10'
-    mem_limit: 1024m
-    restart: on-failure
-
-  laravel:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    command: 'php-fpm -R --force-stderr -F --pid /opt/bitnami/php/tmp/php-fpm.pid -y /opt/bitnami/php/etc/php-fpm.conf'
-    image: deardooley/php-fpm:7.1.9-r0
-    depends_on:
-      - mariadb
-    working_dir: /app/public
-    volumes:
-      - .:/app
-      - ./docker/php-fpm:/bitnami
-#      - ./docker/php-fpm/app-entrypoint.sh:/app-entrypoint.sh
-#      - ./docker/php-fpm:/bitnami/php/conf/php.ini
-    restart: on-failure
-    ports:
-      - 9000:9000
-    environment:
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      DB_HOST: mariadb
-      DB_USERNAME: homestead
-      DB_DATABASE: laravel
-      DB_PASSWORD: homestead
-      DISABLE_LAUNCH_TRACKING: doitnow
-    labels:
-      - "traefik.enable=false"
-    networks:
-      - togo
-    # cpus: '2.0'
-    mem_limit: 1G
-    restart: on-failure
+  togo:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      hostname: laravel.togo.agaveplatform.org
+      image: togo-laravel:5.6-apache
+      depends_on:
+        - mariadb
+#      working_dir: /app/public
+      volumes:
+        - .:/var/www/laravel
+      restart: on-failure
+      ports:
+        - 8080:80
+      labels:
+        - "traefik.enable=true"
+        - "traefik.backend=togo"
+        - "traefik.frontend.rule=Host:laravel.togo.agaveplatform.org,laravel;PathPrefix:/"
+        - "traefik.port=80"
+        - "traefik.protocol=http"
+        - "traefik.frontend.entryPoints=http,https"
+      networks:
+        - togo
+      # cpus: '2.0'
+      mem_limit: 1G
+      restart: on-failure
 
 networks:
   togo:

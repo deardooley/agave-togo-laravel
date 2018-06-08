@@ -1,29 +1,22 @@
-## Laravel 5.6 Boilerplate
+## Agave ToGo - Laravel
 
-[![Latest Stable Version](https://poser.pugx.org/rappasoft/laravel-5-boilerplate/v/stable)](https://packagist.org/packages/rappasoft/laravel-5-boilerplate)
-[![Latest Unstable Version](https://poser.pugx.org/rappasoft/laravel-5-boilerplate/v/unstable)](https://packagist.org/packages/rappasoft/laravel-5-boilerplate) 
-[![StyleCI](https://styleci.io/repos/30171828/shield?style=plastic)](https://styleci.io/repos/30171828/shield?style=plastic)
-[![CircleCI](https://circleci.com/gh/rappasoft/laravel-5-boilerplate/tree/master.svg?style=svg)](https://circleci.com/gh/rappasoft/laravel-5-boilerplate/tree/master)
+Agave ToGo v2 is a full-featured web application providing a reference user interface to exercising the core functionality of the Agave Platform and demonstrate some of the advanced use cases made possible by the Agave Platform's Science API and open source web technologies.
+
+This implementation of the web application is written in PHP and leverages the [Laravel 5 Boilerplate](https://github.com/rappasoft/laravel-5-boilerplate) and [AngularJS framework](http://angularjs.org/). The frontend is identical to the [client-side version of ToGo](http://github.com/agaveplatform/agave-togo) and provides full feature compatibility with the client-side version of ToGo. The backend provides feature parity with other server-side implementations of ToGo.    
+
+Agave ToGo is fully open source under the BSD 2-Clause license. We encourage you to fork the project and use it as a jumping point from which you can build your own application. To contribute back enhancement and bug fixes, please make a pull request on the branch you have forked.
 
 ### Official Documentation
 
-[Click here for the official documentation](http://laravel-boilerplate.com)
+[Click here for the official documentation](http://github.com/agaveplatform/agave-togo-laravel/wiki)
 
 ### Slack Channel
 
-Please join us in our Slack channel to get faster responses to your questions. Get your invite here: https://laravel-5-boilerplate.herokuapp.com
-
-### Laravel 5.5
-
-You can download the last build of Laravel 5.5 [here](https://github.com/rappasoft/laravel-5-boilerplate/tree/Legacy_5.5).
-
-### Laravel 5.4
-
-You can download the last build of Laravel 5.4 [here](https://github.com/rappasoft/laravel-5-boilerplate/tree/Legacy_5.4).
+Please join us in our Slack channel to get faster responses to your questions. Get your invite here: []https://agaveapi.slack.com](https://slackin.agaveapi.co)
 
 ### Introduction
 
-Laravel Boilerplate provides you with a massive head start on any size web application. It comes with a full featured access control system out of the box with an easy to learn API and is built on a Twitter Bootstrap foundation with a front and backend architecture. We have put a lot of work into it and we hope it serves you well and saves you time!
+Agave ToGo is the reference science gateway implementation for the [Agave Platform](https://agaveplatform.org). It provides a web application  Boilerplate provides you with a massive head start on any size web application. It comes with a full featured access control system out of the box with an easy to learn API and is built on a Twitter Bootstrap foundation with a front and backend architecture. We have put a lot of work into it and we hope it serves you well and saves you time!
 
 ### Wiki
 
